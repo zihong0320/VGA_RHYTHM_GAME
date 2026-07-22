@@ -13,7 +13,7 @@
 </p>
 
 * **프로젝트명**: VGA_RHYTHM_GAME (RHYTHM BEAT)
-* **핵심 기능**:
+* **Overview**:
   * **VGA 디스플레이 출력**: FPGA 기반으로 VGA 화면에 노트 및 게임 UI를 실시간 출력
   * **카메라 모션 인식**: OV7670 카메라 모듈을 통해 특정 빨간색 영역(손/물체)을 감지하여 노트 판정 수행
   * **Python UI 연동**: UART 통신을 통한 PC(Python UI)와 FPGA 간 실시간 데이터 송수신
