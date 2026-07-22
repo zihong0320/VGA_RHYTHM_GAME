@@ -47,7 +47,7 @@
 ### 2.1 Overall System Architecture
 
 <p align="center">
-  <img width="45%" alt="Overall Block Diagram" src="https://github.com/user-attachments/assets/99622e72-415e-454e-8ad9-e9cb1c533319" />
+  <img width="70%" alt="Overall Block Diagram" src="https://github.com/user-attachments/assets/99622e72-415e-454e-8ad9-e9cb1c533319" />
 </p>
 
 ---
@@ -55,19 +55,19 @@
 ### 2.2 VGA & Camera Engine
 
 <p align="center">
-  <img width="40%" alt="VGAcam Block Diagram" src="https://github.com/user-attachments/assets/8efc4658-da4f-4744-9d25-fcf86b16ff35" />
+  <img width="65%" alt="VGAcam Block Diagram" src="https://github.com/user-attachments/assets/8efc4658-da4f-4744-9d25-fcf86b16ff35" />
 </p>
 
 #### 2.2-1 SCCB Controller
 <p align="center">
-  <img width="40%" alt="SCCB Controller Diagram" src="https://github.com/user-attachments/assets/82d84dad-945c-4f93-89f3-7358d3898752" />
+  <img width="65%" alt="SCCB Controller Diagram" src="https://github.com/user-attachments/assets/82d84dad-945c-4f93-89f3-7358d3898752" />
 </p>
 
 OV7670 카메라 설정 및 제어를 위해 SCCB 프로토콜을 구현하여 레지스터를 초기화
 
 #### 2.2-2 Region Detector (카메라 색상 인식)
 <p align="center">
-  <img width="40%" alt="Region Detector Diagram" src="https://github.com/user-attachments/assets/dfc156ef-7a4e-49d3-8d34-4e05fd424982" />
+  <img width="60%" alt="Region Detector Diagram" src="https://github.com/user-attachments/assets/dfc156ef-7a4e-49d3-8d34-4e05fd424982" />
 </p>
 
 * **RED 픽셀 판정 기준**:
