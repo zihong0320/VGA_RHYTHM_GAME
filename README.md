@@ -9,7 +9,7 @@
 
 ### Overview
 <p align="center">
-  <img width="684" alt="Overview" src="https://github.com/user-attachments/assets/db06a132-4072-4ef2-b1da-e522fe1b809e" />
+  <img width="342" alt="Overview" src="https://github.com/user-attachments/assets/db06a132-4072-4ef2-b1da-e522fe1b809e" />
 </p>
 
 * **프로젝트명**: VGA_RHYTHM_GAME (RHYTHM BEAT)
@@ -36,8 +36,8 @@
 | **윤수민** | **SCCB & VGA Controller** | OV7670 레지스터 설정, VGA Timing Generator 및 픽셀 출력 |
 | **김수빈** | **GameResult & UVM** | 판정 알고리즘(Perfect/Good/Miss), Fever 모드, UVM 검증 환경 구축 |
 | **문태성** | **Line Counter** | 프레임 단위 노트 Y축 위치 이동 관리 (최대 16개 노트) |
-| **김지홍** | **UART Sender & FIFO** | FPGA $\to$ PC 패킷 전송, FIFO 기반 Latency 및 Pop 타이밍 제어, 음악 ROM 파일 생성 |
-| **송주연** | **UART Receiver & ROM** | PC $\to$ FPGA 노트 생성 제어 신호 수신 및 디코딩 |
+| **김지홍** | **UART Sender & FIFO && ROM** | FPGA $\to$ PC 패킷 전송, FIFO 기반 Latency 및 Pop 타이밍 제어, 음악 ROM 파일 생성 |
+| **송주연** | **UART Receiver & ROM** | PC $\to$ FPGA 노트 생성 제어 신호 수신 및 디코딩, 음악 ROM 파일 생성 |
 | **서어진** | **Python UI** | PySerial 통신, PC 측 음원/노트 동기화 및 대시보드 UI 구현 |
 
 ---
