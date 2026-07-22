@@ -1,109 +1,209 @@
-# VGA_RHYTHM_GAME
+# 🎵 VGA & Camera-Based Rhythm Game System (VGA_RHYTHM_GAME)
 
-## 0. Summary
+> **대한상공회의소 VGA 미니 프로젝트**  
+> FPGA(Verilog HDL), OV7670 카메라 모듈, UART 통신 및 Python UI를 연동한 객체 인식 기반 모션 리듬 게임 시스템[cite: 1]
 
-#### Overview
-- VGA를 이용한 추억의 리듬 게임 시스템 구현(FPGA)
-- OV7670(Cam)을 이용하여 빨간 영역(손)을 감지하여 노트 데이터와 일치 or 불일치 판정
-- PYTHON ui를 통한 게임 구
-<br><br>
+---
 
-#### 개발 환경 및 ARCHITECTURE
-- Cam : OV7670
-- Tool : Vivado, Vscode
-- Language : Systemverilog, Python
-- FPGA Board : Basys3
-<br><br>
+## 📌 0. Summary
 
-## 1. Instruction & Background
-### 1.1 VGA
+### Overview
+<p align="center">
+  <img width="684" alt="Overview" src="https://github.com/user-attachments/assets/db06a132-4072-4ef2-b1da-e522fe1b809e" />
+</p>
 
+* **프로젝트명**: VGA_RHYTHM_GAME (RHYTHM BEAT)[cite: 1]
+* **핵심 기능**:
+  * **VGA 디스플레이 출력**: FPGA 기반으로 VGA 화면에 노트 및 게임 UI를 실시간 출력[cite: 1]
+  * **카메라 모션 인식**: OV7670 카메라 모듈을 통해 특정 빨간색 영역(손/물체)을 감지하여 노트 판정 수행[cite: 1]
+  * **Python UI 연동**: UART 통신을 통한 PC(Python UI)와 FPGA 간 실시간 데이터 인터페이스 구축[cite: 1]
 
+---
 
-## 2. Hardware Architecture & System Design
+### 🛠 개발 환경 및 Architecture
+* **Target Board**: Basys3 (Xilinx Artix-7)[cite: 1]
+* **Camera Module**: OV7670[cite: 1]
+* **Development Tools**: Vivado, VS Code[cite: 1]
+* **Languages**: SystemVerilog, Verilog HDL, Python[cite: 1]
+
+---
+
+### 👥 Team Members & Task Allocation
+
+| Name | Sub-module / Role | Key Responsibilities |
+| :--- | :--- | :--- |
+| **조준호** | **MainController** | 게임 메인 상태 머신(FSM) 설계, 모듈간 동기화 제어[cite: 1] |
+| **윤수민** | **SCCB & VGA Controller** | OV7670 레지스터 설정, VGA Timing Generator 및 픽셀 출력[cite: 1] |
+| **김수빈** | **GameResult & UVM** | 판정 알고리즘(Perfect/Good/Miss), Fever 모드, UVM 검증 환경 구축[cite: 1] |
+| **문태성** | **Line Counter** | 프레임 단위 노트 Y축 위치 이동 관리 (최대 16개 노트)[cite: 1] |
+| **김지홍** | **UART Sender & FIFO** | FPGA $\to$ PC 패킷 전송, FIFO 기반 Latency 및 Pop 타이밍 제어, 음악 ROM 파일 생성[cite: 1] |
+| **송주연** | **UART Receiver & ROM** | PC $\to$ FPGA 노트 생성 제어 신호 수신 및 디코딩[cite: 1] |
+| **서어진** | **Python UI** | PySerial 통신, PC 측 음원/노트 동기화 및 대시보드 UI 구현[cite: 1] |
+
+---
+
+## 🛠️ 2. Hardware Architecture & System Design
+
 ### 2.1 Overall System Architecture
 
+<p align="center">
+  <img width="90%" alt="Overall Block Diagram" src="https://github.com/user-attachments/assets/99622e72-415e-454e-8ad9-e9cb1c533319" />
+</p>
 
-### 2.2 VGA
+---
 
+### 2.2 VGA & Camera Engine
+
+<p align="center">
+  <img width="80%" alt="VGAcam Block Diagram" src="https://github.com/user-attachments/assets/8efc4658-da4f-4744-9d25-fcf86b16ff35" />
+</p>
 
 #### 2.2-1 SCCB Controller
+<p align="center">
+  <img width="85%" alt="SCCB Controller Diagram" src="https://github.com/user-attachments/assets/82d84dad-945c-4f93-89f3-7358d3898752" />
+</p>
 
-#### 2.2-2 Region Detector
+OV7670 카메라 설정 및 제어를 위해 SCCB 프로토콜을 구현하여 레지스터를 초기화합니다[cite: 1].
 
+#### 2.2-2 Region Detector (카메라 색상 인식)
+<p align="center">
+  <img width="80%" alt="Region Detector Diagram" src="https://github.com/user-attachments/assets/dfc156ef-7a4e-49d3-8d34-4e05fd424982" />
+</p>
+
+* **RED 픽셀 판정 기준**:
+  * $R > 4'b0100 \quad \text{and} \quad G < 4'b0111 \quad \text{and} \quad B < 4'b0111$[cite: 1]
+  * $R > G + 4'b0010 \quad \text{and} \quad R > B + 4'b0010$[cite: 1]
+* **REGION 입력 판정 기준**: 지정 영역 내 RED 픽셀 카운트가 **50 Pixel 이상**일 때 유효 감지 판정[cite: 1]
+
+---
 
 ### 2.3 Main Controller
 
-### 2.4 Python - UART TX
+| Main Controller Block Diagram | Dataflow |
+| :---: | :---: |
+| <img src="https://github.com/user-attachments/assets/e1ce6cb1-ed76-4db5-8abe-11a43d938cb7" width="100%"/> | <img src="https://github.com/user-attachments/assets/ec58f5db-4001-45ef-a222-832c346d12b5" width="100%"/> |
 
-### 2.5 Receiver
+<p align="center">
+  <img width="50%" alt="Main Controller FSM" src="https://github.com/user-attachments/assets/ff023d26-c8e9-4cde-9b88-8c37a9f41a51" /><br>
+  <b>[ Main Controller FSM ]</b>
+</p>
 
-### 2.6 Line Counter
+* 게임 전반의 상태(`IDLE`, `SELECT`, `READY`, `GAME`, `DONE`)를 관리하는 State Machine입니다[cite: 1].
 
-### 2.6 GameResult
+---
 
-### 2.7 Score
+### 2.4 Python - UART TX Protocol
 
-### 2.8 Sender
-<img width="899" height="446" alt="image" src="https://github.com/user-attachments/assets/8f674f68-b651-4287-9af4-edfd51c87eb8" />
+<p align="center">
+  <img width="60%" alt="Python UART TX Concept" src="https://github.com/user-attachments/assets/552161-49135d12-b900-4811-8b18-6248603492bd" />
+</p>
 
-<Sender Blockdiagram> 
+* **동작 과정**:
+  1. PC에서 ROM 데이터를 읽어 노트 생성 시점 계산[cite: 1]
+  2. 노트 출발 시점에 UART를 통해 **1 Byte** 데이터 전송[cite: 1]
+  3. 하위 4비트(`lane_data[3:0]`)에 생성된 노트의 레인 정보 매핑[cite: 1]
 
-- 게임 데이터 정보(MISS, GOOD, PERFECT, COMBO, FEVER, SCORE, MAIN STATE) 및 버튼 신호를 PC로 송신
-- 위의 신호들을 총 7byte로 보냄(1패킷의 크기 = 7byte)
-- FIFO를 통해 안정적인 신호 송신
-- FIFO(1byte 전송) - 1/100MHz = 10ns, UART(1byte 전송) - 1/115200 x 8 = 69.44us
-- FIFO의 Depth는 32byte로 7byte 패킷이 4개까지 들어갈 수 있음
-  - 데이터가 유실되지 않는 3가지 이유
-    - ① 사람의 손가락 속도 한계 - UART가 7바이트(1패킷)를 PC로 전부 다 전송하는 데 걸리는 시간은 약 0.6ms, 사람의 버튼 연타 간격: 66ms
-      -> 사람이 두 번째 버튼을 누르기도 전에(66ms) UART는 이미 첫 번째 패킷(0.6ms)을 PC로 다 보내고 FIFO를 싹 비워진 상태   
-    - ③ FIFO에 PUSH 하는 조건
-        .push (fifo_push & !fifo_full)
-    결론 : FIFO 크기보다 큰 데이터가 들어오기 전에 UART가 전송됨
+<p align="center">
+  <img width="50%" alt="1Byte TX Protocol" src="https://github.com/user-attachments/assets/96ae248c-9913-49be-90a7-e4a3efc4f71c" /><br>
+  <b>[ 1 Byte TX Protocol (Baud Rate : 115,200) ]</b>
+</p>
 
+---
 
-<img width="1752" height="738" alt="image" src="https://github.com/user-attachments/assets/25ba40b8-a31d-42d3-a801-3e8cbb0ee16c" />
+### 2.5 Line Counter
 
-<Sender Dataflow>
+<p align="center">
+  <img width="90%" alt="Line Counter Diagram" src="https://github.com/user-attachments/assets/80ca07d8-65a2-4648-9381-f9d5123393a3" />
+</p>
 
+* **Frame 단위 노트 관리**:
+  * `note_start` 및 `lane_data[3:0]` 신호 입력 시, **1 Frame마다 3 Line씩 아래로 하강하는 Line Count 생성**[cite: 1]
+  * 한 화면당 **최대 16개의 Lane/노트** 실시간 관리[cite: 1]
 
-<img width="1712" height="757" alt="image" src="https://github.com/user-attachments/assets/c3221775-2983-467a-a013-a997c850c66d" />
+---
 
-<Sender Control Unit FSM>
+### 2.6 GameResult & Score Engine
 
+| GameResult Diagram | Score Engine |
+| :---: | :---: |
+| <img src="https://github.com/user-attachments/assets/795a947d-91e8-4b21-a602-9d97dd7f309e" width="100%"/> | <img src="https://github.com/user-attachments/assets/f7c66f56-005f-4e7f-87f1-9e0cdffda3cb" width="100%"/> |
 
-### 2.9 Python - UART RX
-<img width="1759" height="764" alt="image" src="https://github.com/user-attachments/assets/bdee63a2-3f17-485a-9da3-5934cc1210d1" />
+* Line Counter의 노트 위치와 카메라/버튼 입력 신호를 비교하여 Perfect, Good, Miss 판정을 수행하고 점수를 업데이트합니다[cite: 1].
 
+---
 
+### 2.7 Sender & UART TX (FPGA $\to$ PC)
 
-## 3. Result
-### 3.1 UVM
+<p align="center">
+  <img width="80%" alt="Sender Block Diagram" src="https://github.com/user-attachments/assets/8f674f68-b651-4287-9af4-edfd51c87eb8" /><br>
+  <b>[ Sender Block Diagram ]</b>
+</p>
 
-#### 3.1-1 Blockdiagram
-<img width="1719" height="767" alt="image" src="https://github.com/user-attachments/assets/cda11cc1-caf3-407f-bca7-f4bdb9ccf126" />
+* **기능**: 게임 상태 정보(MISS, GOOD, PERFECT, COMBO, FEVER, SCORE, MAIN STATE) 및 버튼 신호를 총 **7 Byte 패킷**으로 PC에 송신[cite: 1].
+* **FIFO 기반 안정화**:
+  * FIFO Clock ($100\text{ MHz}$, $10\text{ ns}$) 대비 UART Transmit 속도 ($115,200\text{ bps}$, $1\text{ Byte} \approx 69.44\ \mu\text{s}$) 보완을 위해 **Depth 32 Byte FIFO Buffer** 적용[cite: 1].
+  * 7 Byte 패킷을 최대 4개까지 임시 저장 가능하여 데이터 유실 방지[cite: 1].
+  * UART전송 시간(약 $0.6\text{ ms}$) 대비 사람의 입력 연타 간격(약 $66\text{ ms}$)이 충분히 길어 Buffer Overflow 방지[cite: 1].
 
+<p align="center">
+  <img width="90%" alt="Sender Dataflow" src="https://github.com/user-attachments/assets/25ba40b8-a31d-42d3-a801-3e8cbb0ee16c" /><br>
+  <b>[ Sender Dataflow ]</b>
+</p>
 
-#### 3.1-2 Result
-<img width="2147" height="898" alt="image" src="https://github.com/user-attachments/assets/a68709d2-8fc7-4cc6-b187-b6f7b298268b" />
+* **Sender Control Unit FSM**:
+  <p align="center">
+    <img width="90%" alt="Sender FSM" src="https://github.com/user-attachments/assets/c3221775-2983-467a-a013-a997c850c66d" />
+  </p>
+  * `START` $\to$ `SCORE_THIRD`까지 총 7 Byte를 전송하는 FSM 구조[cite: 1]:
+    * **Byte 0**: Header Bit (`8'hFF`)[cite: 1]
+    * **Byte 1**: `{0, main_state[2:0], btn[3:0]}`[cite: 1]
+    * **Byte 2**: `{0000, Fever, Perfect, Good, Miss}`[cite: 1]
+    * **Byte 3**: `Combo[7:0]`[cite: 1]
+    * **Byte 4**: `Score[7:0]` (LSB)[cite: 1]
+    * **Byte 5**: `Score[15:8]` (MID)[cite: 1]
+    * **Byte 6**: `Score[23:16]` (MSB)[cite: 1]
 
+---
+
+### 2.8 Python - UART RX
+
+<p align="center">
+  <img width="90%" alt="Python UART RX Interface" src="https://github.com/user-attachments/assets/bdee63a2-3f17-485a-9da3-5934cc1210d1" />
+</p>
+
+* FPGA에서 전송된 7 Byte 패킷을 실시간 파싱하여 Python UI 상의 스코어보드 및 대시보드 화면에 반영합니다[cite: 1].
+
+---
+
+## 🧪 3. Result & Verification
+
+### 3.1 Verification Architecture & UVM Result
+
+| UVM Environment Block Diagram | Verification Result |
+| :---: | :---: |
+| <img src="https://github.com/user-attachments/assets/cda11cc1-caf3-407f-bca7-f4bdb9ccf126" width="100%"/> | <img src="https://github.com/user-attachments/assets/a68709d2-8fc7-4cc6-b187-b6f7b298268b" width="100%"/> |
+
+* SystemVerilog UVM 구축을 통해 신호 검증 및 기능 테스트 수행 완료[cite: 1].
+
+---
 
 ### 3.2 Demo Video
-https://github.com/user-attachments/assets/a1a9cf91-86d8-4608-8e64-c149ed528b66
 
-## 4. TroubleShooting & 고찰
-- TroubleShooting
-  - Sender에서 FIFO의 POP 시점 수정
-    
-    <img width="438" height="222" alt="image" src="https://github.com/user-attachments/assets/95e2142d-0a28-4236-8e31-63569ee80e6d" />
-    
-    - 목표 : Main State, 버튼 값, 판정 결과, 점수 등 데이터의 변동이 있을 때마다, 바로 PC로 전송
-    - 문제점 : 데이터 보내는 타이밍이 한 cycle이 밀리는 이슈 발생했었음
-    - 그 문제가 발생한 원인 분석 : POP 시점이 FIFO로 데이터가 들어오자마자가 아닌, 다음 데이터가 들어올 때마다 POP 하도록 수정
-    - 해결한 방법
-        1. !empty && ready && !valid 일 때, pop = 1
-        2. FIFO에 pop 신호가 있을 때, 다음 Uart의 valid 신호 = 1
-        3. Uart의 ready 신호가 있을 때, 다음 valid 신호 = 0
-  - 고찰
-    - 팀원들과의 정확한 소통없이, 간단한 모듈을 구성해 완성하는 것조차 쉽지 않았음
-    - UART, FIFO 타이밍 이슈를 해결하며 통신이 쉽지 않음을 느낌...
+[![Demo Video](https://img.shields.io/badge/Demo_Video-Watch_on_GitHub-blue?style=for-the-badge&logo=github)](https://github.com/user-attachments/assets/a1a9cf91-86d8-4608-8e64-c149ed528b66)[cite: 1]
+
+---
+
+## 🚨 4. TroubleShooting & Review
+
+### 🚨 TroubleShooting: Sender FIFO POP Timing Latency 이슈
+* **목표**: Main State, 버튼 값, 판정 결과, 점수 데이터 변동 시 즉각 PC로 전송[cite: 1].
+* **문제점**: 데이터를 보내는 타이밍이 1-Cycle 밀리는 Latency 이슈 발생[cite: 1].
+* **원인 분석**: POP 시점이 FIFO에 데이터가 들어오자마자가 아닌, 다음 데이터가 들어오는 시점에 POP 되도록 제어되어 오차 발생[cite: 1].
+* **해결 방법**:
+  1. `!empty && ready && !valid` 조건 만족 시 `pop = 1` 트리거[cite: 1]
+  2. FIFO에 `pop` 신호가 있을 때, 다음 UART의 `valid = 1` 설정[cite: 1]
+  3. UART의 `ready` 신호 확인 시 다음 `valid = 0` 처리하여 타이밍 밀림 해결[cite: 1]
+
+### 💡 프로젝트 고찰
+* 명확한 인터페이스 정의와 소통 없이 서브 모듈을 통합하는 과정에서 타이밍 및 통신 지연 문제를 체감할 수 있었습니다[cite: 1].
+* 특히 UART 통신과 FIFO 제어 시 발생한 타이밍 이슈를 분석하고 디버깅하며 하드웨어 간 실시간 통신 시스템 설계의 중요성을 깨달았습니다[cite: 1].
