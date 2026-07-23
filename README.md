@@ -31,7 +31,7 @@
 ### 👥 Team Members & Task Allocation
 
 | Name | Sub-module / Role | Key Responsibilities |
-| :--- | :--- | :--- |
+| :---- | :--- | :--- |
 | **김지홍** | **UART Sender & FIFO & ROM** | FPGA $\to$ PC 패킷 전송, FIFO 기반 Latency 및 Pop 타이밍 제어, 음악 ROM 파일 생성 |
 | **조준호** | **MainController** | 게임 메인 상태 머신(FSM) 설계, 모듈간 동기화 제어 |
 | **윤수민** | **SCCB & VGA Controller** | OV7670 레지스터 설정, VGA Timing Generator 및 픽셀 출력 |
