@@ -42,7 +42,12 @@
 
 ---
 ## 📚 1. Introduction
+<p align="center">
+<img width="625" height="391" alt="image" src="https://github.com/user-attachments/assets/66242859-965c-472b-a6ec-aa74aebb9b7d" />
+</p>
 
+- 추억의 리듬 게임을 VGA를 통해 구현하기 위해 이 프로젝트를 주제로 선정하여 진행
+---
 
 ## 🛠️ 2. Hardware Architecture & System Design
 
